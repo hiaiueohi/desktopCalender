@@ -1,4 +1,5 @@
 node_modules/
 dist/
-# アプリ登録情報 (クライアント シークレットを含む)。配布用に置く場合も公開リポジトリには入れない
+# Google Cloud でダウンロードした登録ファイル (クライアント シークレットを含む)。公開リポジトリには入れない
 oauth-client.json
+client_secret*.json

@@ -1,0 +1,39 @@
+{
+  "name": "desktop-calendar",
+  "productName": "DeskTop Calendar",
+  "version": "1.0.0",
+  "description": "Google カレンダーの予定と Google ToDo のタスクを 1 画面で扱えるデスクトップカレンダー",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "node scripts/start.js",
+    "demo": "node scripts/start.js --demo",
+    "icon": "node scripts/make-icon.js",
+    "test": "node --test",
+    "dist": "electron-builder --win portable nsis"
+  },
+  "keywords": [
+    "calendar",
+    "google-calendar",
+    "google-tasks",
+    "electron"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^33.2.1"
+  },
+  "build": {
+    "appId": "local.desktop-calendar",
+    "productName": "DeskTop Calendar",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json",
+      "oauth-client.json"
+    ],
+    "win": {
+      "icon": "assets/icon.png"
+    }
+  }
+}

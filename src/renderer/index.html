@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ja" data-accent="cyan" class="fx">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+  <title>DeskTop Calendar</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="titlebar">
+    <div class="brand" aria-hidden="true">
+      <span class="brand-mark"></span>
+      <span class="brand-text">DESKTOP<b>//</b>CAL</span>
+    </div>
+    <div class="nav">
+      <button class="icon-btn" id="prevBtn" title="前の月 (←)">
+        <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="hud-btn" id="todayBtn" title="今日 (T)">TODAY</button>
+      <button class="icon-btn" id="nextBtn" title="次の月 (→)">
+        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <h1 id="monthTitle"></h1>
+    </div>
+    <div class="drag-space"></div>
+    <div class="clock" id="clock" aria-label="現在時刻"></div>
+    <div class="status" id="status"></div>
+    <div class="actions">
+      <button class="icon-btn" id="syncBtn" title="今すぐ同期 (R)">
+        <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>
+      </button>
+      <button class="icon-btn" id="pinBtn" title="常に手前に表示">
+        <svg viewBox="0 0 24 24"><path d="M9 4h6l-1 6 4 3v2H6v-2l4-3z"/><path d="M12 15v6"/></svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" title="設定">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+      <span class="sep"></span>
+      <button class="icon-btn win" id="minBtn" title="最小化">
+        <svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg>
+      </button>
+      <button class="icon-btn win" id="maxBtn" title="最大化">
+        <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </button>
+      <button class="icon-btn win close" id="closeBtn" title="閉じる">
+        <svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="banner" id="banner" hidden></div>
+
+  <main>
+    <section class="calendar frame">
+      <div class="weekdays" id="weekdays"></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <aside class="panel frame">
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="day" class="active"></button>
+        <button role="tab" data-tab="tasks"></button>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+      <form class="quick-add" id="quickAdd" autocomplete="off">
+        <div class="qa-input">
+          <span class="prompt">&gt;</span>
+          <input id="qaTitle" placeholder="タスクを追加（Enter で登録）" maxlength="1024">
+        </div>
+        <div class="qa-row">
+          <input type="date" id="qaDue" title="期限">
+          <select id="qaList" title="追加先のリスト"></select>
+          <button type="submit" class="primary">ADD</button>
+        </div>
+      </form>
+    </aside>
+
+    <div class="gate" id="gate" hidden>
+      <div class="gate-card frame">
+        <div class="gate-head"><span>GOOGLE LINK</span><span class="gate-state"><i></i>OFFLINE</span></div>
+        <h2>Google アカウントでログイン</h2>
+        <p>ログインすると、Google カレンダーの予定と ToDo リストのタスクがここに同期されます。<br>一度ログインすれば、次回からは起動するだけで自動的につながります。</p>
+        <button type="button" class="primary big" data-login data-label="Google でログイン">Google でログイン</button>
+        <p class="gate-note" id="gateNote"></p>
+      </div>
+    </div>
+  </main>
+
+  <div class="toasts" id="toasts"></div>
+  <div class="dropveil" id="dropveil" hidden>
+    <div><b>DROP CLIENT JSON</b><span>離すとアプリの登録ファイルを読み込み、そのままログインします</span></div>
+  </div>
+
+  <dialog id="taskDlg">
+    <form method="dialog" id="taskForm">
+      <div class="dlg-head"><span class="dlg-tag">EDIT TASK</span><h2>タスクを編集</h2></div>
+      <label>タイトル<input name="title" required maxlength="1024"></label>
+      <label>メモ<textarea name="notes" rows="4" maxlength="8192"></textarea></label>
+      <div class="row">
+        <label>期限<input type="date" name="due"></label>
+        <label>リスト<input name="list" disabled></label>
+      </div>
+      <div class="dlg-actions">
+        <button type="button" class="danger" id="taskDelete">削除</button>
+        <span class="grow"></span>
+        <button type="button" id="taskCancel">キャンセル</button>
+        <button value="save" class="primary">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="setupDlg" class="wide">
+    <form method="dialog" id="setupForm">
+      <div class="dlg-head"><span class="dlg-tag">INITIAL SETUP</span><h2>アプリを Google に登録する（最初の 1 回だけ）</h2></div>
+      <p class="lead">Google のルールで、カレンダーや ToDo を読み書きするアプリは Google Cloud への登録が必要です（無料・約 3 分）。登録が済めば、あとは「Google でログイン」を押すだけで自動的につながります。</p>
+      <ol class="steps">
+        <li>
+          <div class="step-text"><b>API を有効にする</b><span>プロジェクトを作成（または選択）して、2 つの API をそれぞれ「有効にする」</span></div>
+          <div class="step-actions">
+            <button type="button" data-url="https://console.cloud.google.com/flows/enableapi?apiid=calendar-json.googleapis.com">Calendar API</button>
+            <button type="button" data-url="https://console.cloud.google.com/flows/enableapi?apiid=tasks.googleapis.com">Tasks API</button>
+          </div>
+        </li>
+        <li>
+          <div class="step-text"><b>同意画面を作る</b><span>「開始（Get started）」→ アプリ名と自分のメールを入力 → 対象は「外部（External）」→「作成」</span></div>
+          <div class="step-actions"><button type="button" data-url="https://console.developers.google.com/auth/branding">開く</button></div>
+        </li>
+        <li>
+          <div class="step-text"><b>使う人を設定</b><span>「アプリを公開（Publish app）」がおすすめです（7 日ごとの再ログインが不要になります）。テストのままにする場合は「テストユーザー」に自分の Gmail を追加</span></div>
+          <div class="step-actions"><button type="button" data-url="https://console.developers.google.com/auth/audience">開く</button></div>
+        </li>
+        <li>
+          <div class="step-text"><b>クライアントを作成して JSON を保存</b><span>「クライアントを作成（Create client）」→ 種類「デスクトップ アプリ（Desktop app）」→「作成」→ 表示された画面で「JSON をダウンロード」</span></div>
+          <div class="step-actions"><button type="button" data-url="https://console.developers.google.com/auth/clients">開く</button></div>
+        </li>
+      </ol>
+      <div class="dropzone" id="dropzone">
+        <div class="scan" id="detectIdle"><i></i>ダウンロード フォルダを監視中… JSON を保存すると自動で見つけます</div>
+        <div class="found" id="detectFound" hidden>
+          <div><span class="ok-tag">DETECTED</span><code id="detectName"></code></div>
+          <button type="button" class="primary" id="useDetected">このファイルで Google にログイン</button>
+        </div>
+        <div class="bad" id="detectBad" hidden></div>
+        <div class="alt">または JSON ファイルをこのウィンドウにドラッグ ／ <button type="button" class="link" id="pickJson">ファイルを選択</button></div>
+      </div>
+      <details class="manual">
+        <summary>クライアント ID とシークレットを手入力する</summary>
+        <label>クライアント ID<input id="manualId" placeholder="xxxxxxxx.apps.googleusercontent.com" spellcheck="false"></label>
+        <label>クライアント シークレット<input id="manualSecret" type="password" spellcheck="false"></label>
+        <div class="dlg-inline"><button type="button" class="primary" id="manualSave">保存してログイン</button></div>
+      </details>
+      <div class="dlg-actions"><span class="grow"></span><button value="close">閉じる</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDlg">
+    <form method="dialog" id="settingsForm">
+      <div class="dlg-head"><span class="dlg-tag">SYSTEM CONFIG</span><h2>設定</h2></div>
+
+      <section>
+        <h3><span class="en">ACCOUNT</span>Google アカウント</h3>
+        <div class="account-row">
+          <p class="account" id="accountStatus"></p>
+          <button type="button" class="primary" id="loginBtn" data-login data-label="Google でログイン">Google でログイン</button>
+          <button type="button" id="logoutBtn">ログアウト</button>
+        </div>
+        <p class="hint" id="clientInfo"></p>
+      </section>
+
+      <section id="calSection">
+        <h3><span class="en">CALENDARS</span>表示するカレンダー</h3>
+        <div class="checklist" id="calList"></div>
+      </section>
+
+      <section id="listSection">
+        <h3><span class="en">TASK LISTS</span>表示するタスクリスト</h3>
+        <div class="checklist" id="taskListList"></div>
+        <label class="inline">新しいタスクの既定リスト<select name="defaultTaskList" id="defaultListSel"></select></label>
+      </section>
+
+      <section>
+        <h3><span class="en">DISPLAY</span>表示</h3>
+        <label class="inline">カラー
+          <select name="accent">
+            <option value="cyan">NEON CYAN</option>
+            <option value="magenta">NEON MAGENTA</option>
+            <option value="green">MATRIX GREEN</option>
+            <option value="amber">AMBER ALERT</option>
+          </select>
+        </label>
+        <label class="inline">週の始まり
+          <select name="weekStart"><option value="0">日曜日</option><option value="1">月曜日</option></select>
+        </label>
+        <label class="inline">不透明度<input type="range" name="opacity" min="0.3" max="1" step="0.05"></label>
+        <label class="check"><input type="checkbox" name="effects">エフェクト（走査線・発光アニメーション）</label>
+        <label class="check"><input type="checkbox" name="showHolidays">日本の祝日を表示</label>
+        <label class="check"><input type="checkbox" name="showCompletedInCalendar">完了したタスクもカレンダーに表示</label>
+      </section>
+
+      <section>
+        <h3><span class="en">SYSTEM</span>動作</h3>
+        <label class="inline">自動同期の間隔
+          <select name="syncMinutes"><option value="1">1 分</option><option value="5">5 分</option><option value="10">10 分</option><option value="15">15 分</option><option value="30">30 分</option></select>
+        </label>
+        <label class="check"><input type="checkbox" name="alwaysOnTop">常に手前に表示</label>
+        <label class="check"><input type="checkbox" name="closeToTray">閉じるボタンでタスクトレイに格納</label>
+        <label class="check"><input type="checkbox" name="openAtLogin">Windows ログイン時に起動</label>
+      </section>
+
+      <div class="dlg-actions">
+        <span class="hint" id="versionInfo"></span>
+        <span class="grow"></span>
+        <button value="close" class="primary">閉じる</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="dates.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

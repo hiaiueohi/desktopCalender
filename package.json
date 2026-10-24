@@ -33,7 +33,7 @@
       "oauth-client.json"
     ],
     "win": {
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.ico"
     }
   }
 }
